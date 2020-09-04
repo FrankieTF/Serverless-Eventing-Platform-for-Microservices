@@ -7,7 +7,7 @@ using ContentReactor.Audio.Services.Converters;
 using ContentReactor.Audio.Services.Models.Requests;
 using ContentReactor.Audio.Services.Models.Results;
 using ContentReactor.Shared;
-using ContentReactor.Shared.BlobRepository;
+using ContentReactor.Shared.BlobHelper;
 using ContentReactor.Shared.UserAuthentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -21,16 +21,16 @@ namespace ContentReactor.Audio.Api
     public static class ApiFunctions
     {
         private const string JsonContentType = "application/json";
-        public static IAudioService AudioService = new AudioService(new BlobRepository(), new AudioTranscriptionService(), new EventGridPublisherService());
+        public static IAudioService AudioService = new AudioService(new BlobHelper(), new AudioTranscriptionService(), new EventGridPublisherService());
         public static IUserAuthenticationService UserAuthenticationService = new QueryStringUserAuthenticationService();
 
         [FunctionName("BeginCreateAudio")]
         public static async Task<IActionResult> BeginCreateAudio
-            ([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "audio")]HttpRequest req,
+            ([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "audio")] HttpRequest req,
             TraceWriter log)
         {
             // get the user ID
-            if (! await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
+            if (!await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
             {
                 return responseResult;
             }
@@ -54,7 +54,7 @@ namespace ContentReactor.Audio.Api
 
         [FunctionName("CompleteCreateAudio")]
         public static async Task<IActionResult> CompleteCreateAudio(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "audio/{id}")]HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "audio/{id}")] HttpRequest req,
             TraceWriter log,
             string id)
         {
@@ -77,7 +77,7 @@ namespace ContentReactor.Audio.Api
             }
 
             // get the user ID
-            if (! await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
+            if (!await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
             {
                 return responseResult;
             }
@@ -108,16 +108,16 @@ namespace ContentReactor.Audio.Api
 
         [FunctionName("GetAudio")]
         public static async Task<IActionResult> GetAudio(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "audio/{id}")]HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "audio/{id}")] HttpRequest req,
             TraceWriter log,
             string id)
         {
             // get the user ID
-            if (! await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
+            if (!await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
             {
                 return responseResult;
             }
-            
+
             // get the audio note
             try
             {
@@ -138,11 +138,11 @@ namespace ContentReactor.Audio.Api
 
         [FunctionName("ListAudio")]
         public static async Task<IActionResult> ListAudio(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "audio")]HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "audio")] HttpRequest req,
             TraceWriter log)
         {
             // get the user ID
-            if (! await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
+            if (!await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
             {
                 return responseResult;
             }
@@ -181,16 +181,16 @@ namespace ContentReactor.Audio.Api
 
         [FunctionName("DeleteAudio")]
         public static async Task<IActionResult> DeleteAudio(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "audio/{id}")]HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "audio/{id}")] HttpRequest req,
             TraceWriter log,
             string id)
         {
             // get the user ID
-            if (! await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
+            if (!await UserAuthenticationService.GetUserIdAsync(req, out var userId, out var responseResult))
             {
                 return responseResult;
             }
-            
+
             // delete the audio note
             try
             {
